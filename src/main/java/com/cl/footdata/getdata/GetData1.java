@@ -41,7 +41,15 @@ import com.cl.common.utils.JDBCUtilHikariCP;
 
 public class GetData1 {
     public static void main(String[] args) throws ClientProtocolException, IOException, SQLException {
-        service();
+//        service();
+        Connection connection = JDBCUtilHikariCP.getConnection();
+        String sql="SELECT * FROM t_football_data_dict";
+        PreparedStatement ps1= connection.prepareStatement(sql);
+        ResultSet resultSet = ps1.executeQuery();
+        while(resultSet.next()){
+            System.out.println(resultSet.getString(3));
+        }
+
     }
 
     static Logger logger=Logger.getLogger(GetData1.class);
