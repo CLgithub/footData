@@ -23,14 +23,15 @@ os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.AL32UTF8'    #select userenv(
 
 def func1():
     #getData() #导入数据库数据
+    #应该加入k折验证，
     train_pl,train_labels,test_pl,test_labels = getDataForFile()
     model=setF()
-    #model=learn(model,train_pl,train_labels)
-    model.load_weights('my_checkpoint')
+    model=learn(model,train_pl,train_labels,test_pl,test_labels)
+    #model.load_weights('my_checkpoint')
 
     #test1(test_pl,test_labels,1,model)
 
-    c_pl=[[[2.25],[3.05],[2.80]]]
+    c_pl=[[[1.22],[4.70],[8.00]]]
     c_pl=np.array(c_pl)
     test2(c_pl,model)
 
@@ -102,14 +103,17 @@ def setF():
     #设置层
     model = keras.Sequential([
         keras.layers.Flatten(input_shape=(3,1)),         #第一层，将输入数据从二维数组(1*3)转换成一维数组(1*3=3)
-        keras.layers.Dense(100, activation=tf.nn.relu),     #第一个密集层，3个神经元，采用relu方法
+        keras.layers.Dense(12, activation=tf.nn.relu),     #第一个密集层，3个神经元，采用relu方法
+        keras.layers.Dense(12, activation=tf.nn.relu),     #第一个密集层，3个神经元，采用relu方法
         keras.layers.Dense(3, activation=tf.nn.softmax)    #第二个密集层，3个神经元，采用softmax（判断各个概率）
     ])
-    model.compile(optimizer=tf.train.AdamOptimizer(), loss='sparse_categorical_crossentropy', metrics=['accuracy']) 
+    #model.compile(optimizer=tf.train.AdamOptimizer(), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer='rmsprop', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     return model
+    validation_data=(x_val, y_val)
 
-def learn(model,train_pl,train_labels):
-    model.fit(train_pl, train_labels, epochs=15)
+def learn(model,train_pl,train_labels,test_pl,test_labels):
+    model.fit(train_pl, train_labels, epochs=15, validation_data=(test_pl, test_labels))
     model.save_weights('my_checkpoint')    #手动保存权重
     return model
 
