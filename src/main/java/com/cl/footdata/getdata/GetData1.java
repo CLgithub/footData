@@ -41,15 +41,7 @@ import com.cl.common.utils.JDBCUtilHikariCP;
 
 public class GetData1 {
     public static void main(String[] args) throws ClientProtocolException, IOException, SQLException {
-//        service();
-        Connection connection = JDBCUtilHikariCP.getConnection();
-        String sql="SELECT * FROM t_football_data_dict";
-        PreparedStatement ps1= connection.prepareStatement(sql);
-        ResultSet resultSet = ps1.executeQuery();
-        while(resultSet.next()){
-            System.out.println(resultSet.getString(3));
-        }
-
+        service();
     }
 
     static Logger logger=Logger.getLogger(GetData1.class);
@@ -68,7 +60,8 @@ public class GetData1 {
             cHttpClient_http=HttpClients.createDefault();
             String beginDate=getBeginDate(conn); //查询数据获取最后日前+1
 
-            String url="http://info.sporttery.cn/football/match_result.php";
+            String url="https://info.sporttery.cn/football/match_result.php";
+//            url="https://info.sporttery.cn/football/match_result.php?page=2&search_league=0&start_date=2019-05-23&end_date=2019-06-16";
 //			String beginDate="2019-01-01";
 //			endDate="2019-01-07";
             Map<String, String> paramDatas= new HashMap<String, String>();
@@ -84,6 +77,7 @@ public class GetData1 {
                 paramDatas.put("page",i+"");
                 response= exeRequest(cHttpClient_http, url, paramDatas, null);
                 String content = EntityUtils.toString(response.getEntity(),"gbk");
+//                System.out.println(content);
                 int i1 = content.indexOf("<!--表格开始-->");
                 int i2 = content.indexOf("<!--表格结束-->");
                 String html=content.substring(i1, i2);
