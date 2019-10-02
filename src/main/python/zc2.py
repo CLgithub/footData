@@ -1,5 +1,7 @@
 #coding=utf-8
 
+# 最基础的，利用keras，通过胜平负赔率预测胜平负结果，训练结果保存在my_checkpoint中
+
 # TensorFlow and tf.keras
 import tensorflow as tf
 #from tensorflow import keras
@@ -20,11 +22,14 @@ pwd='123456'
 dburl='localhost:1521/xe'
 os.environ['NLS_LANG'] = 'SIMPLIFIED CHINESE_CHINA.AL32UTF8'    #select userenv('language') from dual 先查询编码
 
-
 def func1():
-    #getData() #导入数据库数据
+    getData() #导入数据库数据
     #应该加入k折验证，
     train_pl,train_labels,test_pl,test_labels = getDataForFile()
+    print(train_pl.shape)
+    print(train_pl[0])
+    print(train_labels.shape)
+    print(train_labels[0])
     model=setF()
     model=learn(model,train_pl,train_labels,test_pl,test_labels)
     #model.load_weights('my_checkpoint')
@@ -89,7 +94,7 @@ def getDataForFile():
         test_pl.append(pls2)
         lable=d1[l.split(',')[-2]]
         test_labels.append(lable)
-    f1.close()
+    f2.close()
 
     train_pl=np.array(train_pl)
     train_labels=np.array(train_labels)
@@ -110,7 +115,6 @@ def setF():
     #model.compile(optimizer=tf.train.AdamOptimizer(), loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     model.compile(optimizer='rmsprop', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     return model
-    validation_data=(x_val, y_val)
 
 def learn(model,train_pl,train_labels,test_pl,test_labels):
     model.fit(train_pl, train_labels, epochs=15, validation_data=(test_pl, test_labels))
